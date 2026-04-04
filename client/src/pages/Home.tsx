@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Clock, MapPin, MapPinOff, Plus, Store, Check, Edit2, Camera, Trash2 } from 'lucide-react';
+import { Clock, MapPin, Plus, Store, Check, Edit2, Camera, Trash2, ChevronRight, TrendingUp } from 'lucide-react';
 import { useMarketStore } from '../store/useStore';
 
 export default function Home() {
@@ -9,8 +9,7 @@ export default function Home() {
   
   // States
   const [time, setTime] = useState(new Date());
-  const [locationEnabled, setLocationEnabled] = useState(false);
-  const [coords, setCoords] = useState<{lat: number, lng: number} | null>(null);
+  const [locationStr, setLocationStr] = useState('Pusat Perbelanjaan, Indonesia');
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editBuffer, setEditBuffer] = useState('');
 
@@ -20,140 +19,172 @@ export default function Home() {
     return () => clearInterval(timer);
   }, []);
 
-  // Location logic
-  const toggleLocation = () => {
-    if (!locationEnabled) {
-      if ('geolocation' in navigator) {
-        navigator.geolocation.getCurrentPosition((pos) => {
-          setCoords({ lat: pos.coords.latitude, lng: pos.coords.longitude });
-          setLocationEnabled(true);
-        }, () => {
-          alert("Gagal mengakses satelit lokasi. Izin ditolak.");
-        });
-      }
-    } else {
-      setLocationEnabled(false);
-      setCoords(null);
-    }
-  };
-
   const handleEditStart = (id: string, currentName: string) => {
     setEditingId(id);
     setEditBuffer(currentName);
   };
 
   const handleEditSave = (id: string) => {
-    if (editBuffer.trim()) {
-      updateStoreName(id, editBuffer.trim());
-    }
+    if (editBuffer.trim()) updateStoreName(id, editBuffer.trim());
     setEditingId(null);
   };
 
   const handleAddStore = () => {
-    addStore("Toko Baru " + (stores.length + 1));
+    addStore("Nama Toko Baru");
   };
 
   return (
-    <div className="min-h-screen bg-neutral-900 text-neutral-100 p-4 md:p-8 font-sans">
+    <div className="animate-in fade-in duration-500 pb-10">
       
-      {/* HEADER: Welcome, Clock, Location */}
-      <header className="max-w-4xl mx-auto bg-neutral-800/80 backdrop-blur-md rounded-2xl p-6 shadow-2xl border border-neutral-700/50 mb-8 flex flex-col md:flex-row justify-between items-center md:items-start gap-4">
-        <div>
-          <h1 className="text-3xl font-extrabold bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent mb-1">
-            Selamat Datang, Admin
-          </h1>
-          <p className="text-neutral-400 font-medium">Dashboard Manajemen Struk & Toko</p>
+      {/* TOP NAVIGATION / SEARCH BAR (Mimicking reference topbar) */}
+      <header className="flex flex-col md:flex-row justify-between items-center gap-4 mb-8">
+        <div className="flex items-center gap-2 text-neutral-500 font-medium bg-white px-4 py-2 rounded-xl shadow-sm border border-neutral-100 w-full md:w-auto">
+          <MapPin className="w-4 h-4 text-emerald-500" />
+          <span>{locationStr}</span>
         </div>
-
-        <div className="flex flex-col items-end gap-3 w-full md:w-auto mt-4 md:mt-0">
-          <div className="flex items-center gap-2 bg-neutral-900/80 px-4 py-2 rounded-xl border border-neutral-700/50">
-            <Clock className="w-5 h-5 text-indigo-400" />
-            <span className="font-mono text-lg font-bold tracking-widest">{time.toLocaleTimeString('id-ID')}</span>
+        
+        <div className="flex items-center gap-4 w-full md:w-auto">
+          <div className="bg-white px-5 py-2.5 rounded-full shadow-sm border border-neutral-100 flex items-center gap-3 w-full md:w-96 text-neutral-400">
+             <div className="w-2 h-2 rounded-full bg-orange-400 animate-pulse"></div>
+             Ketik untuk mencari struk atau toko...
           </div>
-
-          <button 
-            onClick={toggleLocation}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl border transition-all w-full md:w-auto justify-center ${locationEnabled ? 'bg-green-500/10 border-green-500/50 text-green-400 hover:bg-green-500/20' : 'bg-neutral-900/80 border-neutral-700/50 text-neutral-400 hover:bg-neutral-800'}`}
-          >
-            {locationEnabled ? <MapPin className="w-4 h-4" /> : <MapPinOff className="w-4 h-4" />}
-            <span className="text-sm font-semibold text-nowrap">
-              {locationEnabled && coords ? `Lat: ${coords.lat.toFixed(2)}, Lng: ${coords.lng.toFixed(2)}` : 'Aktivasi Lokasi'}
-            </span>
-          </button>
+          <div className="bg-black text-white px-5 py-2.5 rounded-full shadow-lg font-semibold tracking-wide border border-neutral-900 shrink-0">
+             {time.toLocaleTimeString('id-ID', { hour:'2-digit', minute:'2-digit' })}
+          </div>
         </div>
       </header>
 
-      {/* CORE CONTENT */}
-      <main className="max-w-4xl mx-auto">
-        <div className="flex justify-between items-end mb-6">
-          <h2 className="text-xl font-bold flex items-center gap-2">
-            <Store className="w-6 h-6 text-blue-400" /> Jaringan Toko
-          </h2>
-          <button 
-            onClick={() => navigate('/scanner')}
-            className="bg-blue-600 hover:bg-blue-500 text-white font-medium py-2 px-5 rounded-xl transition-all flex items-center shadow-lg shadow-blue-600/20 gap-2"
-          >
-            <Camera className="w-4 h-4" /> Pemindai Struk AI
-          </button>
+      {/* HERO BANNER - Psychological Drive (Emerald/Orange mix) */}
+      <div className="relative w-full rounded-[2.5rem] overflow-hidden bg-gradient-to-br from-emerald-400 to-teal-600 p-8 md:p-12 mb-10 shadow-[0_20px_40px_rgba(16,185,129,0.2)]">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl -translate-y-20 translate-x-32"></div>
+        <div className="absolute bottom-0 left-0 w-64 h-64 bg-orange-400/20 rounded-full blur-2xl translate-y-20 -translate-x-10"></div>
+        
+        <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-6">
+          <div className="text-white max-w-lg">
+            <div className="inline-flex items-center gap-2 bg-white/20 px-3 py-1 rounded-full text-xs font-bold tracking-widest backdrop-blur-sm mb-4">
+              <TrendingUp className="w-3 h-3" /> ANALISIS FINANSIAL AKTIF
+            </div>
+            <h1 className="text-4xl md:text-5xl font-extrabold mb-4 leading-tight">
+              Kendalikan Arus<br/>Keuangan Anda.
+            </h1>
+            <p className="text-emerald-50 text-base md:text-lg mb-8 opacity-90 font-medium">
+              Sistem pintar kami membedah setiap struk belanja menggunakan AI untuk melacak pengeluaran harian. Transparan dan cepat.
+            </p>
+            <button 
+              onClick={() => navigate('/scanner')}
+              className="bg-black hover:bg-neutral-800 text-white font-bold py-4 px-8 rounded-full transition-all shadow-xl shadow-black/20 flex items-center gap-3"
+            >
+              <Camera className="w-5 h-5" /> Catat Struk Sekarang
+            </button>
+          </div>
+          
+          {/* Abstract Graphic Element mimicking models in the ref image */}
+          <div className="hidden md:flex w-64 h-64 bg-white/10 rounded-[3rem] border border-white/20 backdrop-blur-md items-center justify-center rotate-6 shadow-2xl">
+            <ReceiptGraphic />
+          </div>
         </div>
+      </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {stores.map((store) => (
-            <div key={store.id} className="bg-neutral-800 border border-neutral-700 rounded-2xl overflow-hidden shadow-xl group hover:border-neutral-500 transition-colors h-48 flex flex-col relative">
-              
-              {/* Store Awning Design */}
-              <div className="h-10 w-full flex">
-                {[...Array(6)].map((_, i) => (
-                   <div key={i} className={`flex-1 ${i % 2 === 0 ? 'bg-red-500/80' : 'bg-red-400/80'} rounded-b-md shadow-sm transform -translate-y-1`}></div>
-                ))}
+      {/* STORES GRID SECTION */}
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-extrabold text-neutral-800 flex items-center gap-2">
+          Jaringan Pertokoan Terdaftar
+        </h2>
+        <div className="flex gap-2">
+          <span className="bg-neutral-200 text-neutral-600 px-3 py-1 rounded-full text-sm font-bold">Terbaru</span>
+          <span className="text-neutral-400 px-3 py-1 text-sm font-bold cursor-pointer">Sering Kunjung</span>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {stores.map((store) => (
+          <div key={store.id} className="bg-white rounded-[2rem] p-5 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-neutral-100 group relative transition-transform hover:-translate-y-2 hover:shadow-[0_15px_40px_rgb(0,0,0,0.08)] flex flex-col h-64">
+            
+            {/* Minimalist Shop Icon/Graphic */}
+            <div className="h-32 rounded-2xl bg-gradient-to-br from-neutral-50 to-neutral-100 flex items-center justify-center p-4 border border-neutral-100 mb-4 overflow-hidden relative">
+              <div className="absolute top-0 w-full flex opacity-80">
+                 {[...Array(5)].map((_, i) => (
+                   <div key={i} className={`h-4 flex-1 ${i % 2 === 0 ? 'bg-orange-400' : 'bg-red-400'} rounded-b`}></div>
+                 ))}
               </div>
+              <Store className="w-12 h-12 text-neutral-300 drop-shadow-sm" strokeWidth={1} />
+              
+              {/* Quick Action Overlay */}
+              <button 
+                onClick={() => navigate('/scanner')} 
+                className="absolute inset-0 bg-black/40 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center text-white gap-2"
+              >
+                 <div className="bg-orange-500 rounded-full p-3 shadow-lg">
+                   <Plus className="w-6 h-6" />
+                 </div>
+                 <span className="font-bold text-sm">Masuk Toko</span>
+              </button>
+            </div>
 
-              <div className="p-5 flex-1 flex flex-col justify-center text-center relative">
-                {editingId === store.id ? (
-                  <div className="flex flex-col gap-2 relative z-10 w-full">
-                    <input 
-                      autoFocus
-                      type="text" 
-                      value={editBuffer} 
-                      onChange={(e) => setEditBuffer(e.target.value)}
-                      onKeyDown={(e) => e.key === 'Enter' && handleEditSave(store.id)}
-                      className="bg-neutral-900 border border-blue-500 text-white text-center rounded-lg px-3 py-2 w-full font-bold focus:outline-none focus:ring-2 focus:ring-blue-500/50"
-                    />
-                    <button onClick={() => handleEditSave(store.id)} className="bg-green-600/20 text-green-400 py-1.5 rounded-lg border border-green-500/30 flex items-center justify-center gap-1 hover:bg-green-600/30">
-                      <Check className="w-4 h-4" /> Simpan
+            {/* Store Name & Edit */}
+            <div className="flex-1 flex flex-col justify-end">
+              {editingId === store.id ? (
+                <div className="flex flex-col gap-2 relative z-10 w-full mb-1">
+                  <input 
+                    autoFocus
+                    type="text" 
+                    value={editBuffer} 
+                    onChange={(e) => setEditBuffer(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && handleEditSave(store.id)}
+                    className="bg-neutral-50 border border-neutral-200 text-neutral-800 text-center rounded-lg px-2 py-1.5 w-full font-bold focus:outline-none focus:border-emerald-500 text-lg"
+                  />
+                  <button onClick={() => handleEditSave(store.id)} className="bg-emerald-50 text-emerald-600 py-1 text-sm rounded-lg border border-emerald-100 font-semibold hover:bg-emerald-100">
+                    Simpan
+                  </button>
+                </div>
+              ) : (
+                <div className="flex justify-between items-start gap-2">
+                  <div className="w-full">
+                    <h3 className="font-extrabold text-[1.15rem] leading-tight text-neutral-800 truncate pr-2">{store.name}</h3>
+                    <p className="text-xs text-neutral-400 font-medium mt-1">Struk: 0 lembar</p>
+                  </div>
+                  
+                  <div className="flex bg-neutral-50 rounded-lg p-1 opacity-0 group-hover:opacity-100 transition-opacity border border-neutral-100 shrink-0">
+                    <button onClick={() => handleEditStart(store.id, store.name)} className="p-1.5 hover:bg-white rounded text-neutral-400 hover:text-blue-500 transition-colors">
+                      <Edit2 className="w-4 h-4" />
+                    </button>
+                    <button onClick={() => removeStore(store.id)} className="p-1.5 hover:bg-white rounded text-neutral-400 hover:text-red-500 transition-colors">
+                      <Trash2 className="w-4 h-4" />
                     </button>
                   </div>
-                ) : (
-                  <>
-                    <h3 className="font-bold text-[1.1rem] leading-tight text-white mb-1 px-4">{store.name}</h3>
-                    <p className="text-xs text-neutral-500">Terdaftar: {new Date(store.createdAt).toLocaleDateString()}</p>
-                    
-                    <div className="absolute top-4 right-4 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <button onClick={() => handleEditStart(store.id, store.name)} className="bg-neutral-700/50 p-1.5 rounded-md hover:bg-neutral-600 text-neutral-300">
-                        <Edit2 className="w-3.5 h-3.5" />
-                      </button>
-                      <button onClick={() => removeStore(store.id)} className="bg-red-500/20 p-1.5 rounded-md hover:bg-red-500/40 text-red-400">
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
-                  </>
-                )}
-              </div>
+                </div>
+              )}
             </div>
-          ))}
+            
+          </div>
+        ))}
 
-          {/* Add Store Button */}
-          <button 
-            onClick={handleAddStore}
-            className="bg-neutral-800/50 border-2 border-dashed border-neutral-600 hover:border-blue-500 hover:bg-blue-500/5 rounded-2xl h-48 flex flex-col items-center justify-center gap-3 transition-all text-neutral-500 hover:text-blue-400 group"
-          >
-            <div className="bg-neutral-700/50 group-hover:bg-blue-500/20 p-4 rounded-full transition-colors">
-              <Plus className="w-8 h-8" />
-            </div>
-            <span className="font-semibold">Tambah Toko</span>
-          </button>
-        </div>
-      </main>
+        {/* Add Store Button Card */}
+        <button 
+          onClick={handleAddStore}
+          className="bg-white rounded-[2rem] p-5 shadow-sm border-2 border-dashed border-neutral-200 hover:border-orange-400 hover:bg-orange-50/30 flex flex-col items-center justify-center h-64 gap-3 transition-all group"
+        >
+          <div className="bg-neutral-50 text-neutral-300 group-hover:bg-orange-100 group-hover:text-orange-500 p-4 rounded-full transition-colors">
+            <Plus className="w-8 h-8" />
+          </div>
+          <span className="font-extrabold text-neutral-400 group-hover:text-orange-600 transition-colors">Tambah Toko Baru</span>
+        </button>
+      </div>
+
+    </div>
+  );
+}
+
+// Decorative component purely for the banner
+function ReceiptGraphic() {
+  return (
+    <div className="w-32 h-40 bg-white/90 rounded-xl shadow-[0_10px_30px_rgba(0,0,0,0.1)] p-4 flex flex-col gap-2 translate-y-4">
+       <div className="w-full h-2 bg-neutral-200/50 rounded-full mb-2"></div>
+       <div className="w-3/4 h-2 bg-neutral-200/50 rounded-full"></div>
+       <div className="w-5/6 h-2 bg-emerald-100 rounded-full"></div>
+       <div className="mt-auto w-full h-8 bg-orange-100 rounded-lg flex items-center justify-center">
+         <span className="text-orange-500 font-mono text-[10px] font-bold">TOTAL: Rp***</span>
+       </div>
     </div>
   );
 }

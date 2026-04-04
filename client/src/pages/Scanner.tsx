@@ -52,22 +52,22 @@ export default function Scanner() {
   };
 
   return (
-    <div className="min-h-screen bg-neutral-900 text-white flex flex-col items-center justify-center p-4">
-      <div className="max-w-md w-full bg-neutral-800 rounded-2xl shadow-xl overflow-hidden border border-neutral-700">
+    <div className="animate-in fade-in duration-500 pb-10 flex flex-col items-center justify-center min-h-[80vh]">
+      <div className="max-w-md w-full bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden border border-neutral-100">
         
-        <div className="bg-neutral-800/80 px-4 py-3 border-b border-neutral-700/50 flex items-center justify-between">
-          <button onClick={() => navigate('/')} className="bg-neutral-700/50 hover:bg-neutral-600 p-2 rounded-lg text-neutral-300 transition-colors">
+        <div className="bg-neutral-50/80 px-4 py-3 border-b border-neutral-100 flex items-center justify-between">
+          <button onClick={() => navigate('/')} className="bg-white hover:bg-neutral-100 shadow-sm p-2 rounded-xl text-neutral-600 transition-colors border border-neutral-200">
             <ArrowLeft className="w-5 h-5" />
           </button>
-          <span className="font-semibold text-sm text-neutral-400">Pemutus AI</span>
-          <div className="w-9" /> {/* Spacer */}
+          <span className="font-extrabold text-sm text-neutral-800">Pemutus AI</span>
+          <div className="w-9" />
         </div>
 
         <div className="p-6 text-center flex flex-col gap-4">
-          <div className="mx-auto bg-blue-500/10 w-16 h-16 rounded-full flex items-center justify-center mb-0 mt-2">
-            <Receipt className="w-8 h-8 text-blue-400" />
+          <div className="mx-auto bg-emerald-500/10 w-16 h-16 rounded-full flex items-center justify-center mb-0 mt-2">
+            <Receipt className="w-8 h-8 text-emerald-500" />
           </div>
-          <h1 className="text-2xl font-bold">Pencatat Belanja AI</h1>
+          <h1 className="text-2xl font-extrabold text-neutral-800">Pencatat Belanja AI</h1>
 
           {camError && (
              <div className="bg-red-500/10 border border-red-500 text-red-400 text-sm p-3 rounded-lg flex items-start gap-2 text-left">
@@ -79,7 +79,7 @@ export default function Scanner() {
           {!isCameraOpen && !imgSrc && !result && (
             <button 
               onClick={() => { setIsCameraOpen(true); setCamError(null); }}
-              className="mt-4 w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-3 px-4 rounded-xl transition-all flex items-center justify-center gap-2 border border-blue-500 shadow-[0_0_15px_rgba(37,99,235,0.3)]"
+              className="mt-4 w-full bg-orange-500 hover:bg-orange-400 text-white font-bold py-4 px-4 rounded-2xl transition-all flex items-center justify-center gap-2 shadow-lg shadow-orange-500/20"
             >
               <Camera className="w-5 h-5" />
               Buka Kamera
