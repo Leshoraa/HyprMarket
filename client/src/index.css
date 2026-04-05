@@ -1,32 +1,170 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 
 :root {
-  --background: #F7F7F9;
-  --panel: #FFFFFF;
-  --text: #111827;
-  --accent-emerald: #10B981;
-  --accent-orange: #F97316;
+  /* ── Italian Café / Tuscan Vibe Palette ── */
+  --bg: #FFFFFF;
+  /* Brighter background */
+  --bg-soft: #F9F8F6;
+  /* Soft warm ivory */
+  --surface: #FFFFFF;
+  --surface-2: #FAFAFA;
+
+  /* Pomodoro / Terracotta Red (Muted) */
+  --primary: #408A71;
+  --primary-light: #74B49B;
+  --primary-dim: rgba(192, 75, 59, 0.08);
+  --primary-glow: rgba(192, 75, 59, 0.20);
+
+  /* Vibrant Emerald Green (Eye-catching) */
+  --terra: #408A71;
+  --terra-light: #44A194;
+  --terra-dim: rgba(16, 185, 129, 0.12);
+  --terra-glow: rgba(16, 185, 129, 0.25);
+
+  /* Warm Gold / Amber */
+  --tan: #74B49B;
+  --tan-dim: rgba(245, 158, 11, 0.15);
+
+  /* Deep Espresso Text */
+  --olive-dark: #3E362E;
+
+  /* Text Colors (Warm Dark Gray/Brown) */
+  --text-1: #2C2825;
+  --text-2: #4A443F;
+  --text-3: #8C847B;
+  --text-4: #B5B0AA;
+
+  /* Borders / gentle lines */
+  --border: rgba(44, 40, 37, 0.08);
+  --border-soft: rgba(44, 40, 37, 0.04);
+
+  /* Box Shadows - sleek and precise */
+  --shadow-sm: 0 1px 2px rgba(44, 40, 37, 0.04), 0 1px 2px rgba(44, 40, 37, 0.02);
+  --shadow-md: 0 4px 12px rgba(44, 40, 37, 0.04), 0 2px 4px rgba(44, 40, 37, 0.03);
+  --shadow-lg: 0 12px 28px rgba(44, 40, 37, 0.08), 0 4px 12px rgba(44, 40, 37, 0.06);
+  --shadow-card: 0 4px 16px rgba(44, 40, 37, 0.08), 0 0 1px rgba(44, 40, 37, 0.06);
+
+  /* Radii */
+  --radius-xs: 8px;
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 18px;
+  --radius-xl: 24px;
+  --radius-2xl: 32px;
+  --radius-full: 9999px;
+
+  --sidebar-width: 232px;
+  --navbar-h: 56px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
-  background-color: var(--background);
-  color: var(--text);
-  font-family: 'Inter', system-ui, sans-serif;
+  background-color: var(--bg);
+  color: var(--text-1);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.5;
 }
 
-/* Custom Scrollbar for elegance */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
+
 ::-webkit-scrollbar-track {
   background: transparent;
 }
+
 ::-webkit-scrollbar-thumb {
-  background: #E5E7EB;
-  border-radius: 10px;
+  background: var(--text-4);
+  border-radius: var(--radius-full);
 }
+
 ::-webkit-scrollbar-thumb:hover {
-  background: #D1D5DB;
+  background: var(--text-3);
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes pulse-dot {
+
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.5;
+    transform: scale(0.85);
+  }
+}
+
+.animate-in {
+  animation: fade-up 0.35s ease-out both;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.store-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+@media (min-width: 640px) {
+  .store-grid {
+    grid-template-columns: repeat(auto-fill, minmax(185px, 1fr));
+    gap: 16px;
+  }
+}
+
+.home-page {
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+@media (min-width: 640px) {
+  .home-page {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
 }

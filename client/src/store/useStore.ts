@@ -17,10 +17,7 @@ interface MarketState {
 export const useMarketStore = create<MarketState>()(
   persist(
     (set) => ({
-      stores: [
-        { id: '1', name: 'Toko Sumber Rejeki', createdAt: Date.now() },
-        { id: '2', name: 'Minimarket Amanah', createdAt: Date.now() - 100000 }
-      ],
+      stores: [],
       addStore: (name) => set((state) => ({
         stores: [...state.stores, { id: crypto.randomUUID(), name, createdAt: Date.now() }]
       })),

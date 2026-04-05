@@ -1,52 +1,122 @@
 import { NavLink } from 'react-router-dom';
-import { Home, ScanLine, Heart, Settings, MessageSquare, ShoppingBag } from 'lucide-react';
+import { LayoutDashboard, ScanLine, ShoppingBag, Heart, Settings, ChevronRight, Store, Lightbulb } from 'lucide-react';
+
+const navItems = [
+  { to: '/', icon: LayoutDashboard, label: 'Dasbor', active: true },
+  { to: '/scanner', icon: ScanLine, label: 'Pemindai AI', active: true },
+  { to: null, icon: ShoppingBag, label: 'Riwayat', active: false },
+  { to: null, icon: Heart, label: 'Favorit', active: false },
+];
 
 export default function Sidebar() {
   return (
-    <aside className="w-64 bg-white m-4 rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex flex-col p-6 hidden md:flex sticky top-4 h-[calc(100vh-2rem)] border border-neutral-100">
-      
-      {/* BRANDING */}
-      <div className="font-extrabold text-2xl tracking-widest mb-10 flex items-center gap-3">
-        <div className="w-10 h-10 bg-black rounded-xl text-white flex items-center justify-center text-sm shadow-md">
-          HM
-        </div> 
-        HyprMarket
-      </div>
-      
-      {/* NAVIGATION */}
-      <nav className="flex flex-col gap-2 flex-1">
-        <NavLink 
-          to="/" 
-          className={({isActive}) => `flex items-center gap-4 px-4 py-3.5 rounded-2xl font-semibold transition-all ${isActive ? 'bg-black text-white shadow-lg shadow-black/20' : 'text-neutral-500 hover:bg-neutral-50 hover:text-black'}`}
-        >
-          <Home className="w-5 h-5" /> Dasbor
-        </NavLink>
-        
-        <NavLink 
-          to="/scanner" 
-          className={({isActive}) => `flex items-center gap-4 px-4 py-3.5 rounded-2xl font-semibold transition-all ${isActive ? 'bg-black text-white shadow-lg shadow-black/20' : 'text-neutral-500 hover:bg-neutral-50 hover:text-black'}`}
-        >
-          <ScanLine className="w-5 h-5" /> Pemindai AI
-        </NavLink>
+    <aside style={{
+      width: 'var(--sidebar-width)',
+      flexShrink: 0,
+      display: 'flex',
+      flexDirection: 'column',
+      padding: '24px 16px',
+      margin: '24px 0 24px 24px',
+      height: 'calc(100vh - 48px)',
+      position: 'sticky',
+      top: 24,
+      background: 'var(--surface)',
+      borderRadius: 'var(--radius-2xl)',
+      boxShadow: '0 12px 40px rgba(44, 40, 37, 0.12)',
+      border: '1px solid var(--border)',
+      zIndex: 10,
+    }}>
 
-        <div className="flex items-center gap-4 px-4 py-3.5 rounded-2xl font-semibold transition-all text-neutral-400 cursor-not-allowed">
-          <ShoppingBag className="w-5 h-5" /> Riwayat
+      {/* BRAND */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 30, padding: '0 8px' }}>
+        <div style={{
+          width: 38, height: 38,
+          borderRadius: 12,
+          background: 'var(--terra)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          color: 'white',
+          flexShrink: 0,
+          boxShadow: '0 4px 14px var(--terra-glow)',
+        }}>
+          <Store size={20} strokeWidth={2.5} />
         </div>
-        <div className="flex items-center gap-4 px-4 py-3.5 rounded-2xl font-semibold transition-all text-neutral-400 cursor-not-allowed">
-          <Heart className="w-5 h-5" /> Favorit
+        <div>
+          <div style={{ fontWeight: 800, fontSize: 14.5, color: 'var(--text-1)', letterSpacing: '-0.02em', lineHeight: 1.2 }}>HyprMarket</div>
+          <div style={{ fontSize: 9.5, fontWeight: 600, color: 'var(--text-3)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Finance Tracker</div>
         </div>
+      </div>
+
+      {/* SECTION LABEL */}
+      <div style={{ fontSize: 9.5, fontWeight: 700, color: 'var(--text-4)', letterSpacing: '0.12em', textTransform: 'uppercase', padding: '0 10px', marginBottom: 5 }}>
+        Menu
+      </div>
+
+      {/* NAV */}
+      <nav style={{ display: 'flex', flexDirection: 'column', gap: 2, flex: 1 }}>
+        {navItems.map((item) => {
+          const Icon = item.icon;
+          if (!item.active || !item.to) {
+            return (
+              <div key={item.label} style={{
+                display: 'flex', alignItems: 'center', gap: 10,
+                padding: '9px 10px', borderRadius: 'var(--radius-md)',
+                color: 'var(--text-4)', cursor: 'not-allowed',
+                fontSize: 13.5, fontWeight: 500,
+              }}>
+                <Icon size={15} style={{ flexShrink: 0 }} />
+                <span>{item.label}</span>
+              </div>
+            );
+          }
+          return (
+            <NavLink
+              key={item.to}
+              to={item.to}
+              style={({ isActive }) => ({
+                display: 'flex', alignItems: 'center', gap: 10,
+                padding: '9px 10px', borderRadius: 'var(--radius-md)',
+                color: isActive ? 'var(--terra)' : 'var(--text-2)',
+                background: isActive ? 'var(--terra-dim)' : 'transparent',
+                fontWeight: isActive ? 700 : 500,
+                fontSize: 13.5,
+                textDecoration: 'none',
+                transition: 'all 0.18s ease',
+                position: 'relative',
+              })}
+            >
+              {({ isActive }) => (
+                <>
+                  {isActive && (
+                    <div style={{
+                      position: 'absolute', left: 0, top: '50%', transform: 'translateY(-50%)',
+                      width: 4, height: '60%', borderRadius: 99,
+                      background: 'var(--tan)',
+                      boxShadow: '0 0 10px var(--tan-dim)',
+                    }} />
+                  )}
+                  <Icon size={15} style={{ flexShrink: 0 }} />
+                  <span style={{ flex: 1 }}>{item.label}</span>
+                  {isActive && <ChevronRight size={12} style={{ opacity: 0.4 }} />}
+                </>
+              )}
+            </NavLink>
+          );
+        })}
       </nav>
 
-      {/* BOTTOM ACTION */}
-      <div className="mt-auto">
-        <div className="bg-orange-50 border border-orange-100 rounded-2xl p-4 flex flex-col items-center text-center gap-2 mb-4">
-          <div className="bg-orange-100 text-orange-500 w-10 h-10 rounded-full flex items-center justify-center font-bold mb-1">!</div>
-          <p className="text-xs font-semibold text-neutral-700">Tips Finansial</p>
-          <p className="text-[10px] text-neutral-500">Pemindaian rutin menjaga stabilitas anggaran bulanan Anda.</p>
-        </div>
-        
-        <div className="flex items-center gap-4 px-4 py-3 rounded-2xl font-semibold transition-all text-neutral-500 hover:bg-neutral-50 cursor-pointer">
-          <Settings className="w-5 h-5" /> Pengaturan
+      {/* SETTINGS */}
+      <div style={{ borderTop: '1px solid var(--border)', paddingTop: 10 }}>
+        <div style={{
+          display: 'flex', alignItems: 'center', gap: 10,
+          padding: '9px 10px', borderRadius: 'var(--radius-md)',
+          color: 'var(--text-2)', cursor: 'pointer', fontSize: 13.5, fontWeight: 500,
+          transition: 'all 0.18s ease',
+        }}
+          onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'var(--surface-2)'; (e.currentTarget as HTMLElement).style.color = 'var(--text-1)'; }}
+          onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'transparent'; (e.currentTarget as HTMLElement).style.color = 'var(--text-2)'; }}
+        >
+          <Settings size={15} />
+          <span>Pengaturan</span>
         </div>
       </div>
 

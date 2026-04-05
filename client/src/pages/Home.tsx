@@ -1,190 +1,452 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Clock, MapPin, Plus, Store, Check, Edit2, Camera, Trash2, ChevronRight, TrendingUp } from 'lucide-react';
+import { MapPin, Plus, Edit2, Trash2, TrendingUp, Camera, Search, ShoppingBag, Receipt } from 'lucide-react';
 import { useMarketStore } from '../store/useStore';
 
 export default function Home() {
   const navigate = useNavigate();
   const { stores, addStore, updateStoreName, removeStore } = useMarketStore();
-  
-  // States
+
   const [time, setTime] = useState(new Date());
-  const [locationStr, setLocationStr] = useState('Pusat Perbelanjaan, Indonesia');
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editBuffer, setEditBuffer] = useState('');
+  const [activeFilter, setActiveFilter] = useState<'terbaru' | 'sering'>('terbaru');
 
-  // Clock Ticker
   useEffect(() => {
     const timer = setInterval(() => setTime(new Date()), 1000);
     return () => clearInterval(timer);
   }, []);
 
-  const handleEditStart = (id: string, currentName: string) => {
-    setEditingId(id);
-    setEditBuffer(currentName);
-  };
-
+  const handleEditStart = (id: string, name: string) => { setEditingId(id); setEditBuffer(name); };
   const handleEditSave = (id: string) => {
     if (editBuffer.trim()) updateStoreName(id, editBuffer.trim());
     setEditingId(null);
   };
 
-  const handleAddStore = () => {
-    addStore("Nama Toko Baru");
-  };
+  const timeStr = time.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
 
   return (
-    <div className="animate-in fade-in duration-500 pb-10">
-      
-      {/* TOP NAVIGATION / SEARCH BAR (Mimicking reference topbar) */}
-      <header className="flex flex-col md:flex-row justify-between items-center gap-4 mb-8">
-        <div className="flex items-center gap-2 text-neutral-500 font-medium bg-white px-4 py-2 rounded-xl shadow-sm border border-neutral-100 w-full md:w-auto">
-          <MapPin className="w-4 h-4 text-emerald-500" />
-          <span>{locationStr}</span>
-        </div>
-        
-        <div className="flex items-center gap-4 w-full md:w-auto">
-          <div className="bg-white px-5 py-2.5 rounded-full shadow-sm border border-neutral-100 flex items-center gap-3 w-full md:w-96 text-neutral-400">
-             <div className="w-2 h-2 rounded-full bg-orange-400 animate-pulse"></div>
-             Ketik untuk mencari struk atau toko...
+    <div className="home-page" style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', paddingTop: 24, paddingBottom: 80, animation: 'fade-up 0.35s ease-out both' }}>
+
+      {/* ── TOP NAV (Redesigned) ───────────────────────────────── */}
+      <header style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 24, marginBottom: 28, paddingBottom: 16, borderBottom: '1px solid var(--border)' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+          <div style={{ fontSize: 20, fontWeight: 800, color: 'var(--text-1)', letterSpacing: '-0.02em' }}>
+            Halo, Selamat Datang 👋
           </div>
-          <div className="bg-black text-white px-5 py-2.5 rounded-full shadow-lg font-semibold tracking-wide border border-neutral-900 shrink-0">
-             {time.toLocaleTimeString('id-ID', { hour:'2-digit', minute:'2-digit' })}
+          <div style={{ fontSize: 13, color: 'var(--text-3)', fontWeight: 500 }}>
+            Kelola metrik finansial toko Anda secara presisi.
+          </div>
+        </div>
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, flex: 1, justifyContent: 'flex-end' }}>
+          <div style={{
+            display: 'flex', alignItems: 'center', gap: 7,
+            background: 'var(--bg-soft)', padding: '0 14px', height: 42, borderRadius: 'var(--radius-full)',
+            color: 'var(--text-2)', fontSize: 12.5, fontWeight: 600,
+          }}>
+            <MapPin size={13} style={{ color: 'var(--primary)' }} />
+            <span style={{ whiteSpace: 'nowrap' }}>Pusat Perbelanjaan, ID</span>
+          </div>
+
+          <div style={{
+            display: 'flex', alignItems: 'center', gap: 8,
+            background: 'var(--surface)', border: '1px solid var(--border)',
+            padding: '0 16px', height: 42, borderRadius: 'var(--radius-full)',
+            boxShadow: 'var(--shadow-sm)', flex: 1, maxWidth: 360,
+          }}>
+            <Search size={14} style={{ color: 'var(--text-4)' }} />
+            <input
+              type="text"
+              placeholder="Cari rekam struk..."
+              style={{ border: 'none', background: 'transparent', outline: 'none', width: '100%', fontSize: 13, color: 'var(--text-1)', fontWeight: 500 }}
+            />
+            <div style={{ background: 'var(--bg-soft)', color: 'var(--text-3)', fontSize: 10, fontWeight: 700, padding: '3px 6px', borderRadius: 6 }}>⌘K</div>
+          </div>
+
+          <div style={{
+            background: 'var(--terra)', color: 'white',
+            padding: '0 20px', height: 42, borderRadius: 'var(--radius-full)',
+            display: 'flex', alignItems: 'center', fontWeight: 800,
+            fontSize: 14.5, letterSpacing: '0.04em',
+            boxShadow: '0 4px 16px var(--terra-glow)', flexShrink: 0,
+            fontVariantNumeric: 'tabular-nums',
+          }}>
+            {timeStr}
           </div>
         </div>
       </header>
 
-      {/* HERO BANNER - Psychological Drive (Emerald/Orange mix) */}
-      <div className="relative w-full rounded-[2.5rem] overflow-hidden bg-gradient-to-br from-emerald-400 to-teal-600 p-8 md:p-12 mb-10 shadow-[0_20px_40px_rgba(16,185,129,0.2)]">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl -translate-y-20 translate-x-32"></div>
-        <div className="absolute bottom-0 left-0 w-64 h-64 bg-orange-400/20 rounded-full blur-2xl translate-y-20 -translate-x-10"></div>
-        
-        <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-6">
-          <div className="text-white max-w-lg">
-            <div className="inline-flex items-center gap-2 bg-white/20 px-3 py-1 rounded-full text-xs font-bold tracking-widest backdrop-blur-sm mb-4">
-              <TrendingUp className="w-3 h-3" /> ANALISIS FINANSIAL AKTIF
-            </div>
-            <h1 className="text-4xl md:text-5xl font-extrabold mb-4 leading-tight">
-              Kendalikan Arus<br/>Keuangan Anda.
-            </h1>
-            <p className="text-emerald-50 text-base md:text-lg mb-8 opacity-90 font-medium">
-              Sistem pintar kami membedah setiap struk belanja menggunakan AI untuk melacak pengeluaran harian. Transparan dan cepat.
-            </p>
-            <button 
-              onClick={() => navigate('/scanner')}
-              className="bg-black hover:bg-neutral-800 text-white font-bold py-4 px-8 rounded-full transition-all shadow-xl shadow-black/20 flex items-center gap-3"
-            >
-              <Camera className="w-5 h-5" /> Catat Struk Sekarang
-            </button>
-          </div>
-          
-          {/* Abstract Graphic Element mimicking models in the ref image */}
-          <div className="hidden md:flex w-64 h-64 bg-white/10 rounded-[3rem] border border-white/20 backdrop-blur-md items-center justify-center rotate-6 shadow-2xl">
-            <ReceiptGraphic />
-          </div>
-        </div>
-      </div>
+      {/* ── HERO BANNER (compact) ─────────────────── */}
+      <div style={{
+        position: 'relative', overflow: 'hidden',
+        background: 'var(--terra)',
+        borderRadius: 'var(--radius-lg)',
+        padding: '24px 28px',
+        marginBottom: 28,
+        boxShadow: '0 8px 28px rgba(74, 93, 82, 0.25), 0 2px 8px rgba(74, 93, 82, 0.15)',
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        gap: 20,
+      }}>
+        {/* Decorative circles */}
+        <div style={{ position: 'absolute', top: -40, right: 120, width: 140, height: 140, borderRadius: '50%', background: 'rgba(255,255,255,0.07)', pointerEvents: 'none' }} />
+        <div style={{ position: 'absolute', bottom: -30, right: 20, width: 90, height: 90, borderRadius: '50%', background: 'rgba(255,255,255,0.05)', pointerEvents: 'none' }} />
 
-      {/* STORES GRID SECTION */}
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-extrabold text-neutral-800 flex items-center gap-2">
-          Jaringan Pertokoan Terdaftar
-        </h2>
-        <div className="flex gap-2">
-          <span className="bg-neutral-200 text-neutral-600 px-3 py-1 rounded-full text-sm font-bold">Terbaru</span>
-          <span className="text-neutral-400 px-3 py-1 text-sm font-bold cursor-pointer">Sering Kunjung</span>
-        </div>
-      </div>
+        {/* Left content */}
+        <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', gap: 6, flex: 1 }}>
+          <div style={{
+            display: 'inline-flex', alignItems: 'center', gap: 5,
+            background: 'rgba(255,255,255,0.18)', backdropFilter: 'blur(8px)',
+            color: 'rgba(255,255,255,0.75)', padding: '4px 12px',
+            borderRadius: 'var(--radius-full)', width: 'fit-content',
+            fontSize: 9.5, fontWeight: 800, letterSpacing: '0.14em', textTransform: 'uppercase',
+            border: '1px solid rgba(255,255,255,0.15)',
+          }}>
+            <TrendingUp size={9} style={{ color: 'rgba(255,255,255,0.75)' }} /> Analisis Aktif
+          </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {stores.map((store) => (
-          <div key={store.id} className="bg-white rounded-[2rem] p-5 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-neutral-100 group relative transition-transform hover:-translate-y-2 hover:shadow-[0_15px_40px_rgb(0,0,0,0.08)] flex flex-col h-64">
-            
-            {/* Minimalist Shop Icon/Graphic */}
-            <div className="h-32 rounded-2xl bg-gradient-to-br from-neutral-50 to-neutral-100 flex items-center justify-center p-4 border border-neutral-100 mb-4 overflow-hidden relative">
-              <div className="absolute top-0 w-full flex opacity-80">
-                 {[...Array(5)].map((_, i) => (
-                   <div key={i} className={`h-4 flex-1 ${i % 2 === 0 ? 'bg-orange-400' : 'bg-red-400'} rounded-b`}></div>
-                 ))}
+          <h1 style={{ fontSize: 16, fontWeight: 800, color: 'white', lineHeight: 1.3, letterSpacing: '-0.01em' }}>
+            Kendalikan Arus Keuangan Anda.
+          </h1>
+          <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.75)', fontWeight: 400, maxWidth: 320, lineHeight: 1.5 }}>
+            Sistem membedah struk via AI untuk lacak transaksi secara transparan.
+          </p>
+
+          {/* Mini stats */}
+          <div style={{ display: 'flex', gap: 16, marginTop: 2 }}>
+            {[
+              { label: 'Toko Aktif', value: stores.length },
+              { label: 'Struk Direkam', value: 0 },
+            ].map(s => (
+              <div key={s.label}>
+                <div style={{ fontSize: 17, fontWeight: 900, color: 'white', lineHeight: 1 }}>{s.value}</div>
+                <div style={{ fontSize: 10.5, color: 'rgba(255,255,255,0.65)', fontWeight: 500, marginTop: 1 }}>{s.label}</div>
               </div>
-              <Store className="w-12 h-12 text-neutral-300 drop-shadow-sm" strokeWidth={1} />
-              
-              {/* Quick Action Overlay */}
-              <button 
-                onClick={() => navigate('/scanner')} 
-                className="absolute inset-0 bg-black/40 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center text-white gap-2"
-              >
-                 <div className="bg-orange-500 rounded-full p-3 shadow-lg">
-                   <Plus className="w-6 h-6" />
-                 </div>
-                 <span className="font-bold text-sm">Masuk Toko</span>
-              </button>
-            </div>
-
-            {/* Store Name & Edit */}
-            <div className="flex-1 flex flex-col justify-end">
-              {editingId === store.id ? (
-                <div className="flex flex-col gap-2 relative z-10 w-full mb-1">
-                  <input 
-                    autoFocus
-                    type="text" 
-                    value={editBuffer} 
-                    onChange={(e) => setEditBuffer(e.target.value)}
-                    onKeyDown={(e) => e.key === 'Enter' && handleEditSave(store.id)}
-                    className="bg-neutral-50 border border-neutral-200 text-neutral-800 text-center rounded-lg px-2 py-1.5 w-full font-bold focus:outline-none focus:border-emerald-500 text-lg"
-                  />
-                  <button onClick={() => handleEditSave(store.id)} className="bg-emerald-50 text-emerald-600 py-1 text-sm rounded-lg border border-emerald-100 font-semibold hover:bg-emerald-100">
-                    Simpan
-                  </button>
-                </div>
-              ) : (
-                <div className="flex justify-between items-start gap-2">
-                  <div className="w-full">
-                    <h3 className="font-extrabold text-[1.15rem] leading-tight text-neutral-800 truncate pr-2">{store.name}</h3>
-                    <p className="text-xs text-neutral-400 font-medium mt-1">Struk: 0 lembar</p>
-                  </div>
-                  
-                  <div className="flex bg-neutral-50 rounded-lg p-1 opacity-0 group-hover:opacity-100 transition-opacity border border-neutral-100 shrink-0">
-                    <button onClick={() => handleEditStart(store.id, store.name)} className="p-1.5 hover:bg-white rounded text-neutral-400 hover:text-blue-500 transition-colors">
-                      <Edit2 className="w-4 h-4" />
-                    </button>
-                    <button onClick={() => removeStore(store.id)} className="p-1.5 hover:bg-white rounded text-neutral-400 hover:text-red-500 transition-colors">
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-            
+            ))}
           </div>
-        ))}
+        </div>
 
-        {/* Add Store Button Card */}
-        <button 
-          onClick={handleAddStore}
-          className="bg-white rounded-[2rem] p-5 shadow-sm border-2 border-dashed border-neutral-200 hover:border-orange-400 hover:bg-orange-50/30 flex flex-col items-center justify-center h-64 gap-3 transition-all group"
+        {/* CTA */}
+        <button
+          onClick={() => navigate('/scanner')}
+          style={{
+            position: 'relative', zIndex: 1, flexShrink: 0,
+            background: 'var(--tan)', color: 'white',
+            border: 'none', cursor: 'pointer',
+            padding: '0 24px', height: 46, borderRadius: 'var(--radius-full)',
+            fontWeight: 800, fontSize: 13.5,
+            display: 'flex', alignItems: 'center', gap: 7,
+            boxShadow: '0 8px 24px var(--tan)',
+            transition: 'transform 0.18s ease, box-shadow 0.18s ease',
+          }}
+          onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = 'translateY(-2px)'; }}
+          onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = 'translateY(0)'; }}
         >
-          <div className="bg-neutral-50 text-neutral-300 group-hover:bg-orange-100 group-hover:text-orange-500 p-4 rounded-full transition-colors">
-            <Plus className="w-8 h-8" />
-          </div>
-          <span className="font-extrabold text-neutral-400 group-hover:text-orange-600 transition-colors">Tambah Toko Baru</span>
+          <Camera size={14} />
+          Catat Struk
         </button>
       </div>
 
+      {/* ── SECTION HEADER ───────────────────────── */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 18 }}>
+        <div>
+          <h2 style={{ fontSize: 18, fontWeight: 800, color: 'var(--text-1)', letterSpacing: '-0.01em', lineHeight: 1.25 }}>
+            Jaringan Pertokoan
+          </h2>
+          <p style={{ fontSize: 12, color: 'var(--text-3)', fontWeight: 500, marginTop: 2 }}>
+            {stores.length} toko terdaftar
+          </p>
+        </div>
+
+        <div style={{ display: 'flex', gap: 4, background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--radius-md)', padding: 4 }}>
+          {(['terbaru', 'sering'] as const).map(f => (
+            <button key={f} onClick={() => setActiveFilter(f)} style={{
+              padding: '5px 13px', borderRadius: 'var(--radius-sm)',
+              border: 'none', cursor: 'pointer',
+              background: activeFilter === f ? 'var(--terra)' : 'transparent',
+              color: activeFilter === f ? 'white' : 'var(--text-3)',
+              fontSize: 11.5, fontWeight: 700,
+              transition: 'all 0.18s ease',
+            }}>
+              {f === 'terbaru' ? 'Terbaru' : 'Sering Kunjung'}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* ── STORE GRID ───────────────────────────── */}
+      <div className="store-grid">
+
+        {/* ADD CARD */}
+        <AddStoreCard onAdd={() => addStore('Nama Toko Baru')} />
+
+        {/* STORE CARDS */}
+        {stores.map((store, idx) => (
+          <StoreCard
+            key={store.id}
+            store={store}
+            editingId={editingId}
+            editBuffer={editBuffer}
+            setEditBuffer={setEditBuffer}
+            onEditStart={handleEditStart}
+            onEditSave={handleEditSave}
+            onDelete={removeStore}
+            onNavigate={() => navigate('/scanner')}
+            delay={idx * 60}
+          />
+        ))}
+      </div>
     </div>
   );
 }
 
-// Decorative component purely for the banner
-function ReceiptGraphic() {
+/* ─── ADD CARD ─────────────────────────────────────────── */
+function AddStoreCard({ onAdd }: { onAdd: () => void }) {
+  const [hovered, setHovered] = useState(false);
   return (
-    <div className="w-32 h-40 bg-white/90 rounded-xl shadow-[0_10px_30px_rgba(0,0,0,0.1)] p-4 flex flex-col gap-2 translate-y-4">
-       <div className="w-full h-2 bg-neutral-200/50 rounded-full mb-2"></div>
-       <div className="w-3/4 h-2 bg-neutral-200/50 rounded-full"></div>
-       <div className="w-5/6 h-2 bg-emerald-100 rounded-full"></div>
-       <div className="mt-auto w-full h-8 bg-orange-100 rounded-lg flex items-center justify-center">
-         <span className="text-orange-500 font-mono text-[10px] font-bold">TOTAL: Rp***</span>
-       </div>
+    <button
+      onClick={onAdd}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        all: 'unset',
+        cursor: 'pointer',
+        display: 'flex', flexDirection: 'column',
+        borderRadius: 'var(--radius-lg)',
+        overflow: 'hidden',
+        border: `1.5px dashed ${hovered ? 'var(--primary)' : 'var(--border)'}`,
+        background: hovered ? 'var(--primary-dim)' : 'var(--surface)',
+        transform: hovered ? 'translateY(-3px)' : 'translateY(0)',
+        boxShadow: hovered ? 'var(--shadow-md)' : 'var(--shadow-card)',
+        transition: 'all 0.22s ease',
+        minHeight: 230,
+      }}
+    >
+      {/* Roof placeholder */}
+      <div style={{
+        height: 52,
+        background: hovered ? 'var(--primary-dim)' : 'var(--bg-soft)',
+        display: 'flex', alignItems: 'flex-end', justifyContent: 'center',
+        borderBottom: `1px dashed ${hovered ? 'var(--primary)' : 'var(--border)'}`,
+        position: 'relative',
+      }}>
+        <div style={{
+          width: 36, height: 36, borderRadius: 'var(--radius-md)',
+          border: `1.5px dashed ${hovered ? 'var(--primary)' : 'var(--text-4)'}`,
+          background: 'var(--surface)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          transform: 'translateY(50%)',
+        }}>
+          <Plus size={16} style={{ color: hovered ? 'var(--primary)' : 'var(--text-4)' }} />
+        </div>
+      </div>
+
+      {/* Body */}
+      <div style={{ flex: 1, padding: '28px 16px 18px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end', textAlign: 'center' }}>
+        <div style={{ fontSize: 13.5, fontWeight: 700, color: hovered ? 'var(--primary)' : 'var(--text-3)', marginBottom: 4 }}>Tambah Toko</div>
+        <div style={{ fontSize: 11.5, color: 'var(--text-4)', fontWeight: 500, lineHeight: 1.4 }}>Mau ke toko mana hari ini?</div>
+      </div>
+    </button>
+  );
+}
+
+/* ─── STORE CARD (bentuk fasad toko) ───────────────────── */
+const STORE_PALETTES = [
+  { roof: '#D72323', wall: '#FCE38A', accent: '#F57E20' }, // Fast Food / Burger
+  { roof: '#3E6D5B', wall: '#F4EBD0', accent: '#74B49B' }, // Matcha & Cream
+  { roof: '#8D6262', wall: '#F4EBD0', accent: '#DFD8C8' }, // Bakery / Coffee
+  { roof: '#E84A5F', wall: '#FECEA8', accent: '#99B898' }, // Watermelon
+  { roof: '#F08A5D', wall: '#EEEEEE', accent: '#B83B5E' }, // Salmon Sushi
+];
+
+function StoreCard({ store, editingId, editBuffer, setEditBuffer, onEditStart, onEditSave, onDelete, onNavigate, delay }: any) {
+  const [hovered, setHovered] = useState(false);
+  const palette = STORE_PALETTES[parseInt(store.id?.slice(-4) || '0', 16) % STORE_PALETTES.length];
+
+  return (
+    <div
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        borderRadius: 'var(--radius-lg)', overflow: 'hidden',
+        background: 'var(--surface)',
+        border: '1px solid var(--border-soft)',
+        boxShadow: hovered ? 'var(--shadow-lg)' : 'var(--shadow-card)',
+        transform: hovered ? 'translateY(-4px)' : 'translateY(0)',
+        transition: 'all 0.22s ease',
+        animation: `fade-up 0.35s ${delay}ms ease-out both`,
+        display: 'flex', flexDirection: 'column',
+        minHeight: 230, cursor: 'default',
+        position: 'relative',
+      }}
+    >
+      {/* ── FASAD TOKO ── */}
+      <div style={{ position: 'relative', background: palette.wall }}>
+
+        {/* Atap / Awning (Striped & Scalloped) */}
+        <div style={{
+          position: 'relative',
+          display: 'flex',
+          zIndex: 2,
+        }}>
+          {[...Array(7)].map((_, i) => (
+            <div key={i} style={{
+              flex: 1,
+              background: i % 2 === 0 ? palette.roof : palette.accent,
+              height: i % 2 === 0 ? 54 : 50,
+              borderRadius: '0 0 10px 10px',
+              boxShadow: '0 3px 6px rgba(0,0,0,0.08)'
+            }} />
+          ))}
+
+          {/* Nama toko sign di atap */}
+          <div style={{
+            position: 'absolute', top: 12, left: '50%', transform: 'translateX(-50%)',
+            background: 'rgba(0,0,0,0.3)', backdropFilter: 'blur(4px)',
+            color: 'white', fontSize: 10, fontWeight: 800,
+            letterSpacing: '0.06em', padding: '3px 14px',
+            borderRadius: 'var(--radius-full)',
+            maxWidth: '85%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+          }}>
+            {store.name.toUpperCase()}
+          </div>
+        </div>
+
+        {/* Badan toko / fasad */}
+        <div style={{ height: 100, display: 'flex', position: 'relative', overflow: 'hidden' }}>
+
+          {/* Pintu tengah (Natural Wood & Glass) */}
+          <div style={{
+            position: 'absolute', bottom: 0,
+            left: '50%', transform: 'translateX(-50%)',
+            width: 38, height: 60,
+            background: '#8D6E63',
+            border: `2px solid #5D4037`,
+            borderBottom: 'none',
+            borderRadius: '4px 4px 0 0',
+            display: 'flex', flexDirection: 'column', padding: 3,
+            boxShadow: 'inset 0 0 8px rgba(0,0,0,0.2)',
+          }}>
+            {/* Kaca Pintu */}
+            <div style={{ height: 26, background: '#E0F7FA', borderRadius: 2, border: '1px solid rgba(0,0,0,0.1)' }} />
+            {/* Gagang Pintu */}
+            <div style={{ width: 5, height: 6, borderRadius: '50%', background: '#D7CCC8', marginTop: 'auto', marginBottom: 20, marginLeft: 22, boxShadow: '0 1px 2px rgba(0,0,0,0.3)' }} />
+          </div>
+
+          {/* Jendela kiri (Frame Putih & Kaca Cyan) */}
+          <div style={{
+            position: 'absolute', top: 20, left: '16%',
+            width: 32, height: 32,
+            background: '#F5F5F5',
+            border: `2px solid #9E9E9E`,
+            borderRadius: 3,
+            display: 'grid', gridTemplateColumns: '1fr 1fr', gridTemplateRows: '1fr 1fr', gap: 2, padding: 3,
+            boxShadow: '0 2px 4px rgba(0,0,0,0.06), inset 0 2px 4px rgba(0,0,0,0.05)',
+          }}>
+            {[0, 1, 2, 3].map(i => <div key={i} style={{ background: '#CCECF8', borderRadius: 1 }} />)}
+          </div>
+
+          {/* Jendela kanan (Frame Putih & Kaca Cyan) */}
+          <div style={{
+            position: 'absolute', top: 20, right: '16%',
+            width: 32, height: 32,
+            background: '#F5F5F5',
+            border: `2px solid #9E9E9E`,
+            borderRadius: 3,
+            display: 'grid', gridTemplateColumns: '1fr 1fr', gridTemplateRows: '1fr 1fr', gap: 2, padding: 3,
+            boxShadow: '0 2px 4px rgba(0,0,0,0.06), inset 0 2px 4px rgba(0,0,0,0.05)',
+          }}>
+            {[0, 1, 2, 3].map(i => <div key={i} style={{ background: '#CCECF8', borderRadius: 1 }} />)}
+          </div>
+
+          {/* Action overlay on hover */}
+          <div style={{
+            position: 'absolute', inset: 0,
+            background: 'rgba(42, 32, 24, 0.55)', backdropFilter: 'blur(3px)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            opacity: hovered ? 1 : 0, transition: 'opacity 0.22s ease',
+          }}>
+            <button onClick={onNavigate} style={{
+              background: palette.roof, color: 'white',
+              border: 'none', cursor: 'pointer',
+              padding: '7px 16px', borderRadius: 'var(--radius-full)',
+              fontWeight: 700, fontSize: 12,
+              display: 'flex', alignItems: 'center', gap: 5,
+              boxShadow: `0 4px 14px ${palette.roof}60`,
+              transition: 'transform 0.15s',
+            }}>
+              <ShoppingBag size={12} /> Masuk Toko
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* ── CARD FOOTER ── */}
+      <div style={{ padding: '12px 14px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+        {editingId === store.id ? (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
+            <input
+              autoFocus type="text" value={editBuffer}
+              onChange={e => setEditBuffer(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && onEditSave(store.id)}
+              style={{
+                background: 'var(--bg)', border: `1.5px solid ${palette.roof}`,
+                borderRadius: 'var(--radius-sm)', padding: '6px 10px',
+                fontSize: 12.5, fontWeight: 600, color: 'var(--text-1)',
+                outline: 'none', width: '100%',
+              }}
+            />
+            <button onClick={() => onEditSave(store.id)} style={{
+              background: palette.roof, color: 'white',
+              border: 'none', borderRadius: 'var(--radius-xs)',
+              padding: '5px', fontSize: 11.5, fontWeight: 700, cursor: 'pointer',
+            }}>Simpan</button>
+          </div>
+        ) : (
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                  <Receipt size={11} style={{ color: 'var(--text-4)' }} />
+                  <span style={{ fontSize: 11, color: 'var(--text-4)', fontWeight: 500 }}>0 struk</span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                  <ShoppingBag size={11} style={{ color: 'var(--text-4)' }} />
+                  <span style={{ fontSize: 11, color: 'var(--text-4)', fontWeight: 500 }}>0 item</span>
+                </div>
+              </div>
+            </div>
+            <div style={{
+              display: 'flex', gap: 3,
+              opacity: hovered ? 1 : 0, transition: 'opacity 0.18s ease',
+            }}>
+              <button onClick={() => onEditStart(store.id, store.name)} style={{
+                width: 26, height: 26, borderRadius: 'var(--radius-xs)',
+                border: '1px solid var(--border)', background: 'var(--surface)',
+                cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                color: 'var(--text-3)', transition: 'all 0.15s ease',
+              }}
+                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = palette.roof; (e.currentTarget as HTMLElement).style.borderColor = palette.roof; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = 'var(--text-3)'; (e.currentTarget as HTMLElement).style.borderColor = 'var(--border)'; }}
+              >
+                <Edit2 size={11} />
+              </button>
+              <button onClick={() => onDelete(store.id)} style={{
+                width: 26, height: 26, borderRadius: 'var(--radius-xs)',
+                border: '1px solid var(--border)', background: 'var(--surface)',
+                cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                color: 'var(--text-3)', transition: 'all 0.15s ease',
+              }}
+                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = 'var(--primary)'; (e.currentTarget as HTMLElement).style.borderColor = 'var(--primary-light)'; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = 'var(--text-3)'; (e.currentTarget as HTMLElement).style.borderColor = 'var(--border)'; }}
+              >
+                <Trash2 size={11} />
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
